@@ -1,23 +1,27 @@
-name: AppScan DAST Scan
+name: ASoC DAST Scan
 
 on:
-  workflow_dispatch:    # allows manual trigger
   push:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  run-asoc-scan:
-    runs-on: self-hosted   # your local runner
+  asoc-scan:
+    runs-on: self-hosted
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Run HCL AppScan on Cloud DAST
-      uses: HCL-TECH-SOFTWARE/appscan-scan-action@v1
+      uses: HCL-TECH-SOFTWARE/appscan-scan-action@v1  # <-- Confirm this repo exists
       with:
         asoc_key_id: ${{ secrets.ASOC_KEY_ID }}
         asoc_key_secret: ${{ secrets.ASOC_KEY_SECRET }}
-        scan_name: 'RVPTest'
+        scan_name: 'MyDASTScan'
         scan_type: 'dynamic'
         scan_url: 'https://demo.testfire.net'
+        application_id: 'bc39ab99-5c56-4548-b3ed-4f11efc1cba0'
+        network: 'public'
+        fail_build: false
