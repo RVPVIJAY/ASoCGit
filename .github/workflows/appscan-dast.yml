@@ -1,27 +1,35 @@
-name: Run ASoC DAST Scan
+name: HCL AppScan DAST - basic
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:    # allows manual trigger
+  workflow_dispatch:
 
 jobs:
-  asoc-scan:
-    runs-on: self-hosted   # your self-hosted runner
+  scan:
+    runs-on: self-hosted   # Use your self-hosted runner here
 
     steps:
-    - name: Checkout repository code
-      uses: actions/checkout@v4   # ✅ This pulls your repo code
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Run HCL AppScan on Cloud DAST
-      uses: HCL-TECH-SOFTWARE/appscan-scan-action@v1  # ✅ This is the correct Action
-      with:
-        asoc_key_id: ${{ secrets.ASOC_KEY_ID }}       # Your API Key ID stored in GitHub Secrets
-        asoc_key_secret: ${{ secrets.ASOC_KEY_SECRET }} # Your API Secret stored in GitHub Secrets
-        scan_name: 'RVPTest'
-        scan_type: 'dynamic'
-        scan_url: 'https://demo.testfire.net'
-        application_id: 'bc39ab99-5c56-4548-b3ed-4f11efc1cba0'
-        network: 'public'
-        fail_build: false
+      - name: Run ASoC DAST Scan
+        uses: HCL-TECH-SOFTWARE/appscan-dast-action@v1.0.7
+        with:
+          baseurl:  https://cloud.appscan.com
+          asoc_key: ${{ secrets.ASOC_KEY }}
+          asoc_secret: ${{ secrets.ASOC_SECRET }}
+          application_id: acd3ef50-6276-461d-8514-abc6e7113577
+          dynamic_scan_type: dast
+          starting_URL: 'https://demo.testfire.net?mode=demo'
+          login_method: userpass
+          login_user: jsmith
+          login_password: demo1234
+          network: public
+          fail_for_noncompliance: false
+          wait_for_analysis: true
+
+      - name: Upload HCL AppScan HTML Report to Github Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AppScan Security Scan HTML Report 
+          path: '**/AppScan*.html'
+        if: success() || failure()
