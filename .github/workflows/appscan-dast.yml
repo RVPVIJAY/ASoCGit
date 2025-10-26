@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Run HCL AppScan on Cloud DAST
-      uses: HCL-TECH-SOFTWARE/appscan-scan-action@v1  # <-- Confirm this repo exists
+      uses: RVPVIJAY/ASoCGit@v1  # <-- Confirm this repo exists
       with:
         asoc_key_id: ${{ secrets.ASOC_KEY_ID }}
         asoc_key_secret: ${{ secrets.ASOC_KEY_SECRET }}
